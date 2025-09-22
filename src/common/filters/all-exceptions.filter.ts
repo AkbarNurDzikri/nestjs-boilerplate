@@ -109,6 +109,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
           status = HttpStatus.BAD_REQUEST;
           userMessage = 'Operation failed due to related data constraint.';
           break;
+        case 'P1000':
+          status = HttpStatus.SERVICE_UNAVAILABLE;
+          userMessage = 'Authentication failed for database server';
+          break;
         default:
           status = HttpStatus.BAD_REQUEST;
           userMessage = 'Database error.';

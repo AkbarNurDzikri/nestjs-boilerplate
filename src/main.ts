@@ -1,3 +1,16 @@
+import * as dotenv from 'dotenv';
+import { resolve } from 'path';
+import { existsSync } from 'fs';
+
+const envFile = `.env.${process.env.NODE_ENV}`;
+const envPath = resolve(process.cwd(), envFile);
+
+if (existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+} else {
+  dotenv.config();
+}
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ZodValidationPipe } from '@anatine/zod-nestjs';
