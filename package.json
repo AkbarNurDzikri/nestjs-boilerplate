@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-template",
+  "name": "nestjs-boilerplate",
   "version": "0.0.1",
   "description": "NestJS Boilerplate production-ready dengan Prisma, Full Auth Guards (JWT, Role, Permission), Zod DTO Validation, Swagger, dan Winston Logging.",
   "author": "https://github.com/AkbarNurDzikri",
@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "ts-node ./src/prisma/seed.ts"
+    "seed:dev": "cross-env NODE_ENV=development dotenv -e .env.development -- ts-node ./src/prisma/seed.ts",
+    "prisma:migrate:dev": "cross-env NODE_ENV=development dotenv -e .env.development -- prisma migrate dev"
   },
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.12",
@@ -62,6 +63,7 @@
     "@types/supertest": "^6.0.2",
     "@types/winston": "^2.4.4",
     "cross-env": "^10.0.0",
+    "dotenv-cli": "^10.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",

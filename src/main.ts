@@ -10,8 +10,6 @@ import { LoggerService } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
-  console.log(process.env.NODE_ENV);
-
   app.enableCors({
     origin: ['http://localhost:3000', '*'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
