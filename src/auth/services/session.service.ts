@@ -17,6 +17,7 @@ export class SessionService {
     });
 
     return {
+      success: true,
       message: `Cleaned up ${result.count} expired refresh tokens`,
     };
   }
@@ -36,7 +37,7 @@ export class SessionService {
       throw new BadRequestException('Session not found');
     }
 
-    return { message: 'Session revoked successfully' };
+    return { success: true, message: 'Session revoked successfully' };
   }
 
   /**
@@ -72,6 +73,6 @@ export class SessionService {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
 
-    return { message: 'Logged out from all devices' };
+    return { success: true, message: 'Logged out from all devices' };
   }
 }

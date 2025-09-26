@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed:dev": "cross-env NODE_ENV=development dotenv -e .env.development -- ts-node ./src/prisma/seed.ts",
-    "prisma:migrate:dev": "cross-env NODE_ENV=development dotenv -e .env.development -- prisma migrate dev"
+    "prisma:migrate:dev": "cross-env NODE_ENV=development dotenv -e .env.development -- prisma migrate dev",
+    "prisma:studio": "cross-env NODE_ENV=development dotenv -e .env.development -- npx prisma studio"
   },
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.12",

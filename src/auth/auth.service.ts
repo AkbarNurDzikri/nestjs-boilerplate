@@ -172,6 +172,7 @@ export class AuthService {
     await this.mailService.sendVerificationEmail(user.email, user.name, token);
 
     return {
+      success: true,
       message: 'Register success, please check your email to verify account',
     };
   }
@@ -225,15 +226,18 @@ export class AuthService {
     this.setTokenCookies(res, tokens);
 
     return {
+      success: true,
       message: 'Login successful',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        roles,
-        permissions,
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          roles,
+          permissions,
+        },
+        ...tokens,
       },
-      ...tokens,
     };
   }
 
@@ -315,6 +319,7 @@ export class AuthService {
       this.setTokenCookies(res, newTokens);
 
       return {
+        success: true,
         message: 'Token refreshed successfully',
         ...newTokens,
       };
@@ -350,6 +355,6 @@ export class AuthService {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
 
-    return { message: 'Logged out successfully' };
+    return { success: true, message: 'Logged out successfully' };
   }
 }

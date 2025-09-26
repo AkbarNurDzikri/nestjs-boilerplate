@@ -1,14 +1,12 @@
 import {
   Body,
   Controller,
-  Get,
   Param,
   Patch,
   UploadedFile,
   UseGuards,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UpdateUserDto } from './dto/user.dto';
+import { UpdateUserDto } from '../dto/user.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -19,29 +17,14 @@ import {
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
 import { UploadFile } from 'src/common/decorators/upload-file';
-import { Permissions } from 'src/common/decorators/permissions.decorator';
-import { PERMISSIONS } from 'src/common/constants/permissions.constants';
+import { UpdateUser } from '../services/update.user.service';
 
 @ApiTags('Users')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @Get()
-  @ApiOperation({ summary: 'Get all users' })
-  @Permissions(PERMISSIONS.USER.list.name)
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get specific user by user id' })
-  @Permissions(PERMISSIONS.USER.read.name)
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
-  }
+export class UpdateUserController {
+  constructor(private readonly updateUser: UpdateUser) {}
 
   @Patch(':id')
   @ApiOperation({
@@ -88,6 +71,6 @@ export class UserController {
     @Body() data: UpdateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.update(id, data, file);
+    return this.updateUser.update(id, data, file);
   }
 }

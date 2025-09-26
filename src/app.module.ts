@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from './common/logger/logger.module';
+import { PaginationService } from './common/helpers/services/pagination/pagination.service';
 
 @Module({
   imports: [
@@ -26,5 +27,6 @@ import { LoggerModule } from './common/logger/logger.module';
     AuthModule,
     MailModule,
   ],
+  providers: [PaginationService],
 })
 export class AppModule {}

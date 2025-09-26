@@ -1,6 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { PERMISSIONS } from '../common/constants/permissions.constants';
 import * as argon from 'argon2';
+import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,12 @@ async function main() {
     where: { name: 'admin' },
     update: {},
     create: { name: 'admin' },
+  });
+
+  await prisma.role.upsert({
+    where: { name: 'user' },
+    update: {},
+    create: { name: 'user' },
   });
 
   const permissions: { name: string; description: string }[] = [];
@@ -73,6 +80,71 @@ async function main() {
       roleId: role.id,
     },
   });
+
+  const usersToCreate = 50;
+  console.log(`Creating ${usersToCreate} additional users with Faker...`);
+
+  const usersData: Prisma.UserCreateManyInput[] = [];
+
+  for (let i = 0; i < usersToCreate; i++) {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+
+    const email = faker.internet.email({
+      firstName,
+      lastName,
+      provider: 'test.com',
+    });
+    const password = faker.internet.password();
+
+    // Pastikan kita hanya menambahkan properti yang valid untuk createMany
+    usersData.push({
+      name: `${firstName} ${lastName}`,
+      email: email.toLowerCase(),
+      password: await argon.hash(password),
+      isActive: true,
+    });
+  }
+
+  // Menggunakan createMany untuk performa yang lebih baik
+  const createdUsers = await prisma.user.createMany({
+    data: usersData,
+    skipDuplicates: true,
+  });
+
+  console.log(`Created ${createdUsers.count} new users.`);
+
+  // Dapatkan kembali user yang baru dibuat untuk dihubungkan ke role
+  const newUsers = await prisma.user.findMany({
+    where: {
+      email: {
+        in: usersData.map((u) => u.email),
+      },
+    },
+  });
+
+  // Ambil role 'user'
+  const roleUser = await prisma.role.findFirst({
+    where: { name: 'user' },
+  });
+
+  if (!roleUser) {
+    throw new Error("Role 'user' not found. Please ensure it is seeded first.");
+  }
+
+  // Membuat data untuk userRole secara massal
+  const userRolesData: Prisma.UserRoleCreateManyInput[] = newUsers.map((u) => ({
+    userId: u.id,
+    roleId: roleUser.id,
+  }));
+
+  // Menggunakan createMany untuk userRole
+  const createdUserRoles = await prisma.userRole.createMany({
+    data: userRolesData,
+    skipDuplicates: true,
+  });
+
+  console.log(`Assigned role 'user' to ${createdUserRoles.count} users.`);
 }
 
 main()

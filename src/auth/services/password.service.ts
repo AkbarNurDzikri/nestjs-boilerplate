@@ -31,6 +31,7 @@ export class PasswordService {
     await this.mailService.sendPasswordResetEmail(user.email, user.name, token);
 
     return {
+      success: true,
       message: 'Password reset instructions have been sent to your email',
     };
   }
@@ -58,7 +59,10 @@ export class PasswordService {
         }),
       ]);
 
-      return { message: 'Password successfully reset. Please login again.' };
+      return {
+        success: true,
+        message: 'Password successfully reset. Please login again.',
+      };
     } catch (e) {
       console.error(e instanceof Error ? e.message : e);
       throw new BadRequestException('Invalid or expired reset token');

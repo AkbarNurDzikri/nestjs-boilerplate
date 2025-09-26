@@ -1,69 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateUserDto } from '../dto/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdateUserDto } from './dto/user.dto';
-import { FileService } from 'src/shared/services/file.service';
+import { FileService } from 'src/common/helpers/services/file/file.service';
 
 @Injectable()
-export class UserService {
+export class UpdateUser {
   constructor(
     private prisma: PrismaService,
     private fileService: FileService,
   ) {}
-
-  async findAll() {
-    const users = await this.prisma.user.findMany({
-      include: {
-        roles: {
-          include: {
-            role: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    const sanitizedUsers = users.map(({ password, ...rest }) => {
-      return {
-        ...rest,
-        roles: rest.roles.map((r) => ({ id: r.role.id, name: r.role.name })),
-      };
-    });
-
-    return sanitizedUsers;
-  }
-
-  async findOne(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-      include: {
-        roles: {
-          select: {
-            role: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
-
-    const { password, ...rest } = user;
-    const formatted = {
-      ...rest,
-      roles: rest.roles.map((r) => ({ id: r.role.id, name: r.role.name })),
-    };
-    return formatted;
-  }
 
   async update(id: string, data: UpdateUserDto, file?: Express.Multer.File) {
     try {
@@ -111,6 +56,7 @@ export class UserService {
       }
 
       // 6. Remove password dari response
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...rest } = result;
       return rest;
     } catch (error) {

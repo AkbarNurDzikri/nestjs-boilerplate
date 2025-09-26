@@ -27,7 +27,11 @@ export class VerificationService {
         data: { isActive: true },
       });
 
-      return { message: 'Email verified successfully', userId: user.id };
+      return {
+        success: true,
+        message: 'Email verified successfully',
+        data: { userId: user.id },
+      };
     } catch (e) {
       console.error(
         `Failed to verify email: ${e instanceof Error ? e.message : e}`,
@@ -55,6 +59,10 @@ export class VerificationService {
 
     await this.mailService.sendVerificationEmail(user.email, user.name, token);
 
-    return { message: 'The email verification has been resent.' };
+    return {
+      success: true,
+      message:
+        'The email verification has been resent.\nPlease check your mail box',
+    };
   }
 }
